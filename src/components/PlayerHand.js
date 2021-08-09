@@ -1,10 +1,10 @@
 import Spritesheet from 'react-responsive-spritesheet';
 
-import sprite from '../atlasnye-884206_1280_blue.png';
+import sprite from '../images/atlasnye-884206_1280_blue.png';
 import './PlayerHand.css';
-import ace_clubs_card from '../ace_clubs_card.png';
-import ace_spades_card from '../ace_spades_card.png';
-import ace_diamonds_card from '../ace_diamonds_card.png';
+import ace_clubs_card from '../images/ace_clubs_card.png';
+import ace_spades_card from '../images/ace_spades_card.png';
+import ace_diamonds_card from '../images/ace_diamonds_card.png';
 
 const CARD_STR_AR = ["ha", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "hj", "hq", "hk", "placeholder", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "dj", "dq", "dk", "placeholder", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "cj", "cq", "ck", "placeholder", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "sj", "sq", "sk"];
 

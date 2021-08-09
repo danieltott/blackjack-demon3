@@ -2,9 +2,9 @@ import {useEffect, useState} from 'react';
 
 import PlayerHand from './PlayerHand';
 import './Game.css';
-import dealer_win from '../dealer_win_1300.png';
-import dealer_lose from '../dealer_lose_1300.png';
-import no_winner from '../no_winner_1300.png';
+import dealer_win from '../images/dealer_win_1300.png';
+import dealer_lose from '../images/dealer_lose_1300.png';
+import no_winner from '../images/no_winner_1300.png';
 
 //constants
 const SHAPES = ['h', 'd', 'c', 's'];
@@ -343,9 +343,7 @@ const Game = ({isGamePaused}) => {
   }, [gameStatus, shuffledDeck.length, dealerHandsLen, dealerCardTotal, shuffledDeck, playerHands]);
 
   let resultsMessage = getResultsMessage();
-  console.log('resultsMessage', resultsMessage)
   let avatarSrc = resultsMessageToAvatarSrc[resultsMessage];
-  console.log('avatarSrc', avatarSrc)
 
   return (
     <div className="game_container">
