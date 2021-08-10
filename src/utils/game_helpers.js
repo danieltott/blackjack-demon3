@@ -83,4 +83,28 @@ const playerGetHandValue = (cards, acesCountToPossibleValuesMap, valueToNum) => 
   return totalValue;
 }
 
-export { createDeck, shuffleDeck, doPlayerCardsContainAce, reorderPlayerCards, playerGetHandValue };
+//need to keep track of each player's total hand value at the end of the round
+const getWinnersLosers = (playerCardTotal, dealerCardTotal) => {
+  let losers = [];
+  let winners = [];
+
+  if (playerCardTotal === 21 && dealerCardTotal === 21) {
+    return {losers, winners};
+  }
+  if (dealerCardTotal <= 21) {
+    if (playerCardTotal < dealerCardTotal || playerCardTotal > 21) {
+      losers.push('p');
+      winners.push('d');  
+    }
+  }
+  if (playerCardTotal <= 21) {
+    if (dealerCardTotal < playerCardTotal || dealerCardTotal > 21) {
+      losers.push('d');
+      winners.push('p');  
+    }
+  }
+  return {losers, winners};
+}
+
+export { createDeck, shuffleDeck, doPlayerCardsContainAce, reorderPlayerCards, 
+  playerGetHandValue, getWinnersLosers };
