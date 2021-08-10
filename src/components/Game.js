@@ -5,10 +5,11 @@ import './Game.css';
 import dealer_win from '../images/dealer_win_1300.png';
 import dealer_lose from '../images/dealer_lose_1300.png';
 import no_winner from '../images/no_winner_1300.png';
+import { SHAPES, VALUES } from '../utils/constants';
+import { createDeck, shuffleDeck, doPlayerCardsContainAce, 
+  reorderPlayerCards, playerGetHandValue } from '../utils/game_helpers';
 
 //constants
-const SHAPES = ['h', 'd', 'c', 's'];
-const VALUES = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
 const valueToNum = {j: 10, q: 10, k: 10};
 const acesCountToPossibleValuesMap = new Map();
 acesCountToPossibleValuesMap.set(1, [11, 1]);
@@ -54,7 +55,7 @@ const Game = ({isGamePaused}) => {
   }
 
   const initGame = () => {
-    let newDeck = createDeck();
+    let newDeck = createDeck(SHAPES, VALUES);
     let newShuffledDeck = shuffleDeck(newDeck);
     setShuffledDeck(newShuffledDeck);
     initialDeal(newShuffledDeck);
@@ -82,90 +83,6 @@ const Game = ({isGamePaused}) => {
     }
   }
 
-  //create a deck (ordered)
-  const createDeck = () => {
-    let newDeck = [];
-    SHAPES.forEach(s => {
-      VALUES.forEach(v => {
-        let card = `${s}${v}`;
-        newDeck.push(card);
-      })
-    })
-    return newDeck;
-  }
-
-  //shuffling on each new round
-  const shuffleDeck = (deck) => {
-    const shuffledDeck = [];
-    const copyDeck = deck.slice(0);
-
-    while (copyDeck.length) {
-      let curLen = copyDeck.length;
-      let randIdx = Math.floor(Math.random() * curLen);
-      let removedCard = copyDeck.splice(randIdx, 1);
-      shuffledDeck.push(removedCard[0]);
-    }
-    return shuffledDeck;
-  }
-
-  //array of card strings
-  const doPlayerCardsContainAce = (cards) => {
-    for (let i = 0; i < cards.length; i++) {
-      if (cards[i].indexOf('a') > -1) {
-        return true;
-      }
-    } 
-    return false;
-  }
-
-  const reorderPlayerCards = (cards) => {
-    if (!doPlayerCardsContainAce(cards)) {
-      return {reorderedCards: cards, numberAces: 0};
-    }
-    let reorderedCards = [];
-    let numberAces = 0;
-    cards.forEach(card => {
-      if (card[card.length - 1] === 'a') {
-        reorderedCards.push(card);
-        numberAces += 1;
-      } else {
-        reorderedCards.unshift(card);
-      }
-    })
-
-    return {reorderedCards, numberAces};
-  }
-
-  //use for regular player
-  const playerGetHandValue = (cards) => {
-    let totalValue = 0;
-    let {reorderedCards, numberAces} = reorderPlayerCards(cards);
-
-    for (let i = 0; i < reorderedCards.length; i++) {
-      let valueStr = reorderedCards[i].slice(1);
-      let valueNum;
-      if (isNaN(valueStr)) {
-        if (valueToNum[valueStr]) {
-          valueNum = valueToNum[valueStr]
-        } else if (valueStr === 'a') {
-          let acesPossibleValues = acesCountToPossibleValuesMap.get(numberAces);
-          for (let j = 0; j < acesPossibleValues.length; j++) {
-            if (acesPossibleValues[j] + totalValue <= 21) {
-              valueNum = acesPossibleValues[j];
-              return totalValue + valueNum;
-            } else if (acesPossibleValues[j] + totalValue > 21 && j === acesPossibleValues.length - 1) {
-              valueNum = acesPossibleValues[j];
-              return totalValue + valueNum;
-            }
-          }
-        }
-      } else {
-        valueNum = parseInt(valueStr, 10);
-      }
-      totalValue += valueNum;
-    }
-    return totalValue;
-  }
 
   //deal cards to a regular player
   const dealOneCardToPlayer = (player, shuffledDeck) => {
@@ -176,7 +93,7 @@ const Game = ({isGamePaused}) => {
     setPlayerHands({...playerHands, [player]: updatedPlayerHand});
     setShuffledDeck(copyShuffledDeck);
 
-    let curPlayerHandValue = playerGetHandValue(updatedPlayerHand);
+    let curPlayerHandValue = playerGetHandValue(updatedPlayerHand, acesCountToPossibleValuesMap, valueToNum);
     if (curPlayerHandValue >= 21) {
       setPlayerCardTotals({...playerCardTotals, [player]: curPlayerHandValue})
       setGameStatus(gameStatus + 1);
@@ -187,7 +104,7 @@ const Game = ({isGamePaused}) => {
 
   const playerIsDone = (player) => {
     if (player === 'p') {
-      let playerTotal = playerGetHandValue(playerHands[player]);
+      let playerTotal = playerGetHandValue(playerHands[player], acesCountToPossibleValuesMap, valueToNum);
       setPlayerCardTotals({...playerCardTotals, [player]: playerTotal});
       setGameStatus(2);
     }
