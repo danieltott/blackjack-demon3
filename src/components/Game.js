@@ -5,17 +5,11 @@ import './Game.css';
 import dealer_win from '../images/dealer_win_1300.png';
 import dealer_lose from '../images/dealer_lose_1300.png';
 import no_winner from '../images/no_winner_1300.png';
-import { SHAPES, VALUES } from '../utils/constants';
+import { SHAPES, VALUES, valueToNum, acesCountToPossibleValuesMap } from '../utils/constants';
 import { createDeck, shuffleDeck, doPlayerCardsContainAce, 
-  reorderPlayerCards, playerGetHandValue } from '../utils/game_helpers';
+  reorderPlayerCards, playerGetHandValue, getWinnersLosers } from '../utils/game_helpers';
 
 //constants
-const valueToNum = {j: 10, q: 10, k: 10};
-const acesCountToPossibleValuesMap = new Map();
-acesCountToPossibleValuesMap.set(1, [11, 1]);
-acesCountToPossibleValuesMap.set(2, [12, 2]);
-acesCountToPossibleValuesMap.set(3, [13, 3]);
-acesCountToPossibleValuesMap.set(4, [14, 4]);
 const players = ['p','d'];
 const resultsMessageToAvatarSrc = {
   "There were no winners.": no_winner,
@@ -113,35 +107,12 @@ const Game = ({isGamePaused}) => {
     }
   }
 
-  //need to keep track of each player's total hand value at the end of the round
-  const getWinnersLosers = () => {
-    let losers = [];
-    let winners = [];
-
-    if (playerCardTotals['p'] === 21 && playerCardTotals['d'] === 21) {
-      return {losers, winners};
-    }
-    if (playerCardTotals['d'] <= 21) {
-      if (playerCardTotals['p'] < playerCardTotals['d'] || playerCardTotals['p'] > 21) {
-        losers.push('p');
-        winners.push('d');  
-      }
-    }
-    if (playerCardTotals['p'] <= 21) {
-      if (playerCardTotals['d'] < playerCardTotals['p'] || playerCardTotals['d'] > 21) {
-        losers.push('d');
-        winners.push('p');  
-      }
-    }
-    return {losers, winners};
-  }
-
   const closeDisplayResults = () => {
     setDisplayResults(false);
   }
 
   const getResultsMessage = () => {
-    let {losers, winners} = getWinnersLosers();
+    let { losers, winners } = getWinnersLosers(playerCardTotals.p, playerCardTotals.d);
     if (losers.length === 0 && winners.length === 0) {
       return `There were no winners.`;
     }
