@@ -15,6 +15,15 @@ describe('game engine tests', () => {
     test('reorder 6 cards', () => {
       expect(reorderPlayerCards(['sa', 'ha', 'ca', 'c9', 'da', 'sj']).reorderedCards).toEqual(['sj', 'c9', 'sa', 'ha', 'ca', 'da']);
     });
+    test('reorder 4 cards b', () => {
+      expect(reorderPlayerCards(['ca', 'ha', 'sj', 'c9'])).toEqual({reorderedCards: ['c9', 'sj', 'ca', 'ha'], numberAces: 2});
+    });
+    test('reorder 5 cards 3 ace', () => {
+      expect(reorderPlayerCards(['da', 'ca', 'ha', 'sj', 'c9'])).toEqual({reorderedCards: ['c9', 'sj', 'da', 'ca', 'ha'], numberAces: 3});
+    });
+    test('reorder no aces', () => {
+      expect(reorderPlayerCards(['c5', 'c9',  'd2'])).toEqual({reorderedCards: ['c5', 'c9',  'd2'], numberAces: 0});
+    });
   });
 
   describe('test playerGetHandValue()', () => {
@@ -47,20 +56,9 @@ describe('game engine tests', () => {
     });
   });
 
-
 });
 
 //TESTING
-// reorderPlayerCards(['ca', 'ha', 'sj', 'c9']); // {reorderedCards: ['sj', 'c9', 'ca', 'ha'], numberAces: 2}
-// reorderPlayerCards(['da', 'ca', 'ha', 'sj', 'c9']); // {reorderedCards: ['sj', 'c9', 'da', 'ca', 'ha'], numberAces: 3}
-// console.log(reorderPlayerCards(['c5', 'c9',  'd2'])); // {reorderedCards: ['c5', 'c9',  'd2'], numberAces: 0}
-
-// console.log(isPlayerBust(['c3', 'sk', 'hq'])); //true passing
-// console.log(isPlayerBust(['ca', 'sj'])); //false passing
-// console.log(isPlayerBust(['ca', 'sj', 'c9'])); //false passing
-// console.log(isPlayerBust(['ca', 'ha', 'sj', 'c9', 'd3'])); //true passing
-// console.log(isPlayerBust(['ca', 'ha', 'sj', 'c9'])); //false passing
-// console.log(isPlayerBust(['ca', 'ha', 'da', 'sa', 'c9'])); //false passing
 
 //TEST evaluteWinnerUser
 
