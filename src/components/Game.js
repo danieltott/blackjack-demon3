@@ -6,8 +6,8 @@ import dealer_win from '../images/dealer_win_1300.png';
 import dealer_lose from '../images/dealer_lose_1300.png';
 import no_winner from '../images/no_winner_1300.png';
 import { SHAPES, VALUES, valueToNum, acesCountToPossibleValuesMap } from '../utils/constants';
-import { createDeck, shuffleDeck, doPlayerCardsContainAce, 
-  reorderPlayerCards, playerGetHandValue, getWinnersLosers } from '../utils/game_helpers';
+import { createDeck, shuffleDeck,
+  playerGetHandValue, getWinnersLosers } from '../utils/game_helpers';
 
 //constants
 const players = ['p','d'];
@@ -35,17 +35,20 @@ const Game = ({isGamePaused}) => {
     let dealerCards = [];
     let playerCards = [];
     for (let i = 0; i < (players.length) * 2; i++) {
-      let card = shuffledDeck.pop();
-      let p = i < players.length ? players[i] : players[i % players.length];
-      if (p === 'p') {
-        dealerCards.push(card);
-      }
-      if (p === 'd') {
-        playerCards.push(card);
-      }
-      playerHands[p].push(card);
+      window.setTimeout(() => {
+        let card = shuffledDeck.pop();
+        let p = i < players.length ? players[i] : players[i % players.length];
+  
+        if (p === 'p') {
+          dealerCards.push(card);
+        }
+        if (p === 'd') {
+          playerCards.push(card);
+        }
+        setPlayerHands({p: playerCards, d: dealerCards});  
+      }, 1500)
+      //playerHands[p].push(card);
     }
-    setPlayerHands({p: playerCards, d: dealerCards});
   }
 
   const initGame = () => {
@@ -84,27 +87,35 @@ const Game = ({isGamePaused}) => {
     let card = copyShuffledDeck.pop();
     let curPlayerHand = playerHands[player].slice(0);
     let updatedPlayerHand = curPlayerHand.concat([card]);
-    setPlayerHands({...playerHands, [player]: updatedPlayerHand});
-    setShuffledDeck(copyShuffledDeck);
 
-    let curPlayerHandValue = playerGetHandValue(updatedPlayerHand, acesCountToPossibleValuesMap, valueToNum);
-    if (curPlayerHandValue >= 21) {
-      setPlayerCardTotals({...playerCardTotals, [player]: curPlayerHandValue})
-      setGameStatus(gameStatus + 1);
-    }
-
-    return updatedPlayerHand;
+    //want to slightly slow down the update of cards on screen to make the game more lifelike/engaging
+    window.setTimeout(() => {
+      setPlayerHands({...playerHands, [player]: updatedPlayerHand});
+      setShuffledDeck(copyShuffledDeck);
+  
+      let curPlayerHandValue = playerGetHandValue(updatedPlayerHand, acesCountToPossibleValuesMap, valueToNum);
+      if (curPlayerHandValue >= 21) {
+        window.setTimeout(() => {
+          setPlayerCardTotals({...playerCardTotals, [player]: curPlayerHandValue})
+          setGameStatus(gameStatus + 1);  
+        }, 1000);
+      }
+  
+      return updatedPlayerHand;  
+    }, 750);
   }
 
   const playerIsDone = (player) => {
-    if (player === 'p') {
-      let playerTotal = playerGetHandValue(playerHands[player], acesCountToPossibleValuesMap, valueToNum);
-      setPlayerCardTotals({...playerCardTotals, [player]: playerTotal});
-      setGameStatus(2);
-    }
-    if (player === 'd') {
-      setGameStatus(3);
-    }
+    window.setTimeout(() => {
+      if (player === 'p') {
+        let playerTotal = playerGetHandValue(playerHands[player], acesCountToPossibleValuesMap, valueToNum);
+        setPlayerCardTotals({...playerCardTotals, [player]: playerTotal});
+        setGameStatus(2);
+      }
+      if (player === 'd') {
+        setGameStatus(3);
+      }  
+    }, 1000);
   }
 
   const closeDisplayResults = () => {
